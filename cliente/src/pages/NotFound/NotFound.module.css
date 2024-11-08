@@ -1,0 +1,92 @@
+.container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(130deg, #f1f4f6, #dff0ff);
+    font-size: 2rem;
+    user-select: none;
+}
+
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+    max-width: 1100px;
+    width: 100%;
+    padding: 20px;
+}
+
+.row {
+    flex: 1;
+    min-width: 280px;
+    max-width: 45%;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.caixaErro {
+    display: block;
+    gap: 20rem;
+}
+
+.caixaErro {
+    display: flex;
+    flex-direction: column;
+    padding: 4rem;
+    gap: 30px;
+}
+
+.caixaErro h2 {
+    font-size: 50px;
+    font-weight: 700;
+    color: var(--color-scd);
+}
+
+.caixaErro p {
+    font-size: 18px;
+    line-height: 1.6rem;
+    font-weight: 600;
+    color: #2e1d5f;
+}
+
+.botaoCta {
+    display: inline-flex;
+    width: 220px;
+    font-size: 18px;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 10px 24px;
+    border-radius: 15px 15px 0px 15px;
+    transition: background-color 0.3s ease;
+}
+
+.botaoCta:hover {
+    color: var(--color-primary);
+    background: var(--color-primary-variant);
+}
+
+.imagem {
+    width: 100%;
+    max-width: 420px;
+    background: #addfff;
+    border-radius: 46% 43% 57% 35% / 32% 40% 20% 41%;
+    transition: transform 0.3s ease;
+    user-select: none;
+}
+
+@media (max-width: 768px) {
+    .caixaErro {
+        padding: 30px 10px;
+    }
+
+    .caixaErro h2 {
+        font-size: 36px;
+    }
+
+    .caixaErro p {
+        font-size: 16px;
+    }
+}
