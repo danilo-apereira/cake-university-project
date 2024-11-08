@@ -1,0 +1,128 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #111;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    background: linear-gradient(90deg, #f288f2, #c43fc4, #9b44f2, #6c28b1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+.navItems a {
+    color: var(--color-primary);
+    margin: 0 15px;
+    text-decoration: none;
+}
+
+.navItems a:hover {
+    color: var(--color-primary-variant);
+}
+
+.authButtons {
+    display: flex;
+    gap: 10px;
+}
+
+.signIn, .signUp {
+    background-color: transparent;
+    border: 1px solid var(--color-primary);
+    border-radius: 0.4rem;
+    color: var(--color-primary);
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.signIn:hover {
+    color: var(--color-primary-variant);
+    border: 1px solid var(--color-primary-variant);
+}
+
+.signUp {
+    background-color: var(--color-scd);
+    border: none;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+
+.signUp:hover {
+    background-color: var(--color-scd-variant);
+    border: none;
+    color: var(--color-primary);
+}
+
+main {
+    text-align: center;
+    padding: 100px 20px;
+    background: var(--color-background);
+    color: var(--color-dark);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    background: linear-gradient(90deg, #f288f2, #c43fc4, #9b44f2, #6c28b1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+section p {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+}
+
+.experimente {
+    background-color: var(--color-scd);
+    color: #fff;
+    padding: 16px 24px;
+    border: none;
+    border-radius: 15px 15px 0px 15px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease;
+}
+
+.experimente:hover {
+    background-color: var(--color-scd-variant);
+    color: var(--color-primary);
+}
+
+.mensagens {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 40px;
+    color: #8d8d8d;
+    font-size: 0.9rem;
+}
+
+.footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #111;
+    color: #5e647e;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
