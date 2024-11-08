@@ -1,12 +1,41 @@
 import { Routes, Route } from 'react-router-dom'
+import PublicLayout from './layouts/PublicLayout'
+import NavbarLayout from './layouts/NavbarLayout'
 import Home from '../pages/Home/Home'
 import NotFound from '../pages/NotFound/NotFound'
+import Confeitaria from '../pages/Confeitaria/Confeitaria'
+
+const routes = [
+    {
+        layout: PublicLayout,
+        paths: [
+            { path: "/", element: <Home /> },
+            { path: "*", element: <NotFound /> }
+        ]
+    },
+    {
+        layout: NavbarLayout,
+        paths: [
+            { path: "/confeitaria", element: <Confeitaria /> }
+        ]
+    }
+];
 
 function AppRoutes() {
     return (
         <Routes>
-            <Route exact path="/" element={<Home />} />
-            <Route path="*" element={<NotFound />} />
+            {routes.map((route, index) => (
+                <Route key={index} element={<route.layout />}>
+                    {route.paths.map((path, idx) => (
+                        <Route
+                            key={idx}
+                            path={path.path}
+                            index={path.path === "/" ? true : undefined}
+                            element={path.element}
+                        />
+                    ))}
+                </Route>
+            ))}
         </Routes>
     );
 }
