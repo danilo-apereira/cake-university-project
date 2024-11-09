@@ -42,7 +42,11 @@
 .caixaErro h2 {
     font-size: 50px;
     font-weight: 700;
-    color: var(--color-scd);
+    background: linear-gradient(90deg, #47137b, #762cc0, #972897, #cf5bcf);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
 }
 
 .caixaErro p {
@@ -56,16 +60,19 @@
     display: inline-flex;
     width: 220px;
     font-size: 18px;
-    background-color: var(--color-primary);
+    background: linear-gradient(90deg, #f288f2, #c43fc4, #9b44f2, #6c28b1);
     color: var(--color-white);
     padding: 10px 24px;
     border-radius: 15px 15px 0px 15px;
-    transition: background-color 0.3s ease;
+    transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
 }
 
 .botaoCta:hover {
-    color: var(--color-primary);
-    background: var(--color-primary-variant);
+    transform: scale(1.1);
+    background: linear-gradient(90deg, #47137b, #762cc0, #972897, #cf5bcf);
+    color: var(--color-white);
+    padding: 10px 24px;
+    border-radius: 15px 15px 0px 15px;
 }
 
 .imagem {
