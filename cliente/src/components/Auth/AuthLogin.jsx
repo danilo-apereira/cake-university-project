@@ -2,26 +2,34 @@ import React, { useState } from 'react'
 import styles from '../../assets/styles/Auth/Auth.module.css'
 
 const AuthLogin = () => {
-    const [values, setValues] = useState({ email: '', senha: '' });
+    const [values, setValues] = useState({ emailOuTelefone: '', senha: '' });
     const [errors, setErrors] = useState({});
+    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setValues((prevValues) => ({ ...prevValues, [name]: value }));
+        const updatedValues = { ...values, [name]: value };
 
-        if (!value) {
-            setErrors((prevErrors) => ({
-                ...prevErrors,
-                [name]: "Este campo é obrigatório",
-            }));
+        setValues(updatedValues);
+
+        const newErrors = { ...errors };
+        if (!value.trim()) {
+            newErrors[name] = "Este campo é obrigatório";
         } else {
-            setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
+            newErrors[name] = "";
         }
+        setErrors(newErrors);
+
+        const hasErrors = Object.values(newErrors).some((error) => error !== '');
+        const hasEmptyFields = Object.values(updatedValues).some((val) => val.trim() === '');
+        setIsButtonDisabled(hasErrors || hasEmptyFields);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(values);
+        if (!isButtonDisabled) {
+            console.log(values);
+        }
     };
 
     return (
@@ -31,16 +39,16 @@ const AuthLogin = () => {
                 <div className={styles.inputContainer}>
                     <input
                         type="text"
-                        id="email"
-                        name="email"
+                        id="emailOuTelefone"
+                        name="emailOuTelefone"
                         placeholder=" "
-                        value={values.email}
+                        value={values.emailOuTelefone}
                         onChange={handleChange}
                         autoComplete="on"
                     />
-                    <label htmlFor="email">E-mail ou número de telefone</label>
-                    {errors.email && (
-                        <p className={styles.errorMessage}>{errors.email}</p>
+                    <label htmlFor="emailOuTelefone">E-mail ou número de telefone</label>
+                    {errors.emailOuTelefone && (
+                        <p className={styles.errorMessage}>{errors.emailOuTelefone}</p>
                     )}
                 </div>
                 <div className={styles.inputContainer}>
@@ -59,7 +67,11 @@ const AuthLogin = () => {
                     )}
                 </div>
                 <a href="/user/reset-password">Esqueceu sua senha?</a>
-                <button type="submit" className={styles.auth}>
+                <button
+                    type="submit"
+                    className={`${styles.auth} ${isButtonDisabled ? styles.buttonDisabled : ''}`}
+                    disabled={isButtonDisabled}
+                >
                     Entrar
                 </button>
             </form>
