@@ -1,39 +1,38 @@
 .container {
     background-color: #fff;
-    border-radius: 1rem;
+    border-radius: 0.4rem;
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
     position: absolute;
     overflow: hidden;
     width: 768px;
     max-width: 100%;
-    min-height: 480px;
+    min-height: 540px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
-.container p {
+.message-container {
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     font-size: 14px;
-    line-height: 20px;
-    letter-spacing: 0.3px;
-    margin: 20px 0;
+    line-height: 1.5;
+    padding: 0 10px;
 }
 
 .container span {
-    margin: 0.2rem;
-    margin-top: 8px;
+    margin-top: 0.4rem;
     font-size: 14px;
 }
 
 .container form a {
-    margin: 0.2rem;
+    margin: 0.6rem 0 0;
     color: var(--color-dark);
     font-size: 14px;
     text-decoration: none;
-}
-
-.container form h1 {
-    margin-bottom: 0.8rem;
 }
 
 .container button {
@@ -83,25 +82,112 @@
     flex-direction: column;
     padding: 0 40px;
     height: 100%;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.container input {
-    background-color: #f7f7f7;
-    border: none;
-    margin: 8px 0;
-    padding: 10px 15px;
-    font-size: 13px;
+.inputContainer {
+    position: relative;
+    margin: 14px 0;
+    width: 100%;
+    max-width: 400px;
+    text-align: left;
+}
+
+.inputContainer input {
+    background-color: var(--color-white);
+    border: 1px solid #ccc;
+    margin: 0;
+    padding: 12px 15px;
+    font-size: 14px;
     border-radius: 8px;
     width: 100%;
     outline: none;
+    box-sizing: border-box;
 }
 
-.formulario-container {
+.inputContainer label {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #aaa;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.inputContainer input:focus + label,
+.inputContainer input:not(:placeholder-shown) + label {
+    background: var(--color-white);
+    top: -1px;
+    left: 15px;
+    font-size: 14px;
+    padding: 0 4px;
+    color: var(--color-scd);
+}
+
+.inputContainer input:not(:placeholder-shown) {
+    border: 1px solid var(--color-scd);
+}
+
+.inputContainer input:focus {
+    border-color: var(--color-scd);
+}
+
+.inputContainer .errorMessage {
+    position: absolute;
+    font-size: 14px;
+    color: var(--color-danger);
+}
+
+.addressContainer {
+    display: flex;
+    gap: 5px;
+}
+
+.address {
+    flex: 4;
+}
+
+.number {
+    flex: 2;
+}
+
+.iconContainer {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.infoBox {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff;
+    color: var(--color-dark);
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 10;
+}
+
+.iconContainer .icon {
+    font-size: 2rem;
+    color: var(--color-scd);
+}
+
+.formularioContainer {
     position: absolute;
     top: 0;
     height: 100%;
     width: 50%;
-    transition: all 0.6s ease-in-out;
+    transition: all 0.8s ease-in-out;
     opacity: 0;
     z-index: 1;
 }
@@ -130,19 +216,19 @@
     z-index: 5;
 }
 
-.trocar-container {
+.trocarContainer {
     position: absolute;
     top: 0;
     left: 50%;
     width: 50%;
     height: 100%;
     overflow: hidden;
-    transition: all 0.6s ease-in-out;
+    transition: all 0.8s ease-in-out;
     border-radius: 40px 0 0 40px;
     z-index: 1000;
 }
 
-.container.active .trocar-container {
+.container.active .trocarContainer {
     transform: translateX(-100%);
     border-radius: 0 40px 40px 0;
 }
@@ -157,7 +243,7 @@
     height: 100%;
     width: 200%;
     transform: translateX(0);
-    transition: all 0.6s ease-in-out;
+    transition: all 0.8s ease-in-out;
     user-select: none;
 }
 
@@ -176,7 +262,7 @@
     transform: translateX(50%);
 }
 
-.painel-trocar {
+.painelTrocar {
     position: absolute;
     width: 50%;
     height: 100%;
@@ -188,27 +274,27 @@
     text-align: center;
     top: 0;
     transform: translateX(0);
-    transition: all 0.6s ease-in-out;
+    transition: all 0.8s ease-in-out;
 }
 
-.trocar-esquerda {
+.trocarEsquerda {
     transform: translateX(-200%);
 }
 
-.container.active .trocar-esquerda {
+.container.active .trocarEsquerda {
     transform: translateX(0);
 }
 
-.trocar-direita {
+.trocarDireita {
     right: 0;
     transform: translateX(0);
 }
 
-.container.active .trocar-direita {
+.container.active .trocarDireita {
     transform: translateX(200%);
 }
 
-.painel-trocar h1 {
+.painelTrocar h1 {
     color: #4a167e;
 }
 
