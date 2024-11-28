@@ -1,0 +1,151 @@
+.container {
+    max-width: 700px;
+    margin: 50px auto;
+    text-align: center;
+    padding: 30px;
+}
+
+.title {
+    font-size: 28px;
+    background: linear-gradient(90deg, #f288f2, #c43fc4, #9b44f2, #6c28b1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    margin: 0 0 1rem;
+}
+
+.subtitle {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.form {
+    margin-top: 20px;
+}
+
+.form h2 {
+    margin: 1.4rem;
+}
+
+.steps {
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 30px;
+}
+
+.progressLineBg {
+	position: absolute;
+	top: 50%;
+	left: 0;
+	height: 2px;
+	width: 100%;
+	background-color: #d8d8d8;
+	transform: translateY(-50%);
+	z-index: 0;
+}
+
+.progressLine {
+	position: absolute;
+	top: 50%;
+	left: 0;
+	height: 2px;
+	width: 0;
+	background-color: #9b44f2;
+	transition: width 0.3s ease;
+	transform: translateY(-50%);
+	z-index: 1;
+}
+
+.step {
+	position: relative;
+	width: 30px;
+	height: 30px;
+	background-color: #ccc;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--color-dark);
+	font-weight: bold;
+	z-index: 2;
+}
+
+.step.active {
+	background-color: #6c28b1;
+    color: var(--color-white);
+}
+
+.step.completed {
+	background-color: #9b44f2;
+    color: var(--color-white);
+}
+
+.form label {
+    display: block;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.options {
+    justify-content: center;
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+button {
+    background-color: var(--color-scd);
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0.4rem;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+button:hover {
+    background-color: var(--color-scd-variant);
+}
+
+.selectedButton {
+    background-color: var(--color-scd-variant);
+    color: #fff;
+    border: 2px solid var(--color-scd);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.nextButton,
+.prevButton {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: var(--color-scd);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.nextButton:hover,
+.prevButton:hover {
+    background-color: var(--color-scd-variant);
+}
+
+.error {
+    color: var(--color-danger);
+    font-size: 14px;
+    margin-top: 10px;
+}
