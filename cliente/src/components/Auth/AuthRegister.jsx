@@ -76,12 +76,60 @@ const AuthRegister = () => {
 
             return updatedFormData;
         });
-    };
 
-    const handleContinuar = () => {
-        const temErros = validarEtapa();
-        if (!temErros) {
-            definirEtapaRegistro(2);
+        if (id === 'email') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (value && !emailRegex.test(value)) {
+                definirErros((prevErrors) => ({
+                    ...prevErrors,
+                    email: 'Formato de e-mail inválido'
+                }));
+            } else {
+                definirErros((prevErrors) => ({
+                    ...prevErrors,
+                    email: ''
+                }));
+            }
+        }
+
+        if (id === 'nome') {
+            if (/^\d+$/.test(value)) {
+                definirErros((prevErrors) => ({
+                    ...prevErrors,
+                    nome: 'Formato de nome inválido'
+                }));
+            } else {
+                definirErros((prevErrors) => ({
+                    ...prevErrors,
+                    nome: ''
+                }));
+            }
+        }
+
+        if (id === 'numero') {
+            if (/\D/.test(value)) {
+                definirErros((prevErrors) => ({
+                    ...prevErrors,
+                    numero: 'Inválido'
+                }));
+            } else {
+                definirErros((prevErrors) => ({
+                    ...prevErrors,
+                    numero: ''
+                }));
+            }
+        }
+
+        if (id === 'confirmarSenha' && formData.senha !== value) {
+            definirErros((prevErrors) => ({
+                ...prevErrors,
+                confirmarSenha: 'As senhas não coincidem'
+            }));
+        } else if (id === 'confirmarSenha') {
+            definirErros((prevErrors) => ({
+                ...prevErrors,
+                confirmarSenha: ''
+            }));
         }
     };
 

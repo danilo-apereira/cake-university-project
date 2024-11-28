@@ -5,6 +5,8 @@ import Home from '../pages/Home/Home'
 import Auth from '../pages/Auth/Auth'
 import NotFound from '../pages/NotFound/NotFound'
 import Confeitaria from '../pages/Confeitaria/Confeitaria'
+import CadastrarConfeitaria from '../pages/Confeitaria/CadastrarConfeitaria'
+import CadastrarBolo from '../pages/Confeitaria/CadastrarBolo'
 
 const routes = [
     {
@@ -12,6 +14,8 @@ const routes = [
         paths: [
             { path: "/", element: <Home /> },
             { path: "/user/auth", element: <Auth /> },
+            { path: "/confeitaria/cadastrar-confeitaria", element: <CadastrarConfeitaria /> },
+            { path: "/confeitaria/cadastrar-bolo", element: <CadastrarBolo /> },
             { path: "*", element: <NotFound /> }
         ]
     },
