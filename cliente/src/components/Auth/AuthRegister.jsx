@@ -133,11 +133,6 @@ const AuthRegister = () => {
         }
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(values);
-    };
-
     const handleVoltar = (e) => {
         e.preventDefault();
         definirTooltipVisivel(false);
