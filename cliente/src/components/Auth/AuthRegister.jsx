@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { IoIosArrowRoundBack } from 'react-icons/io'
-import styles from '../../assets/styles/Auth/Auth.module.css'
+import React, { useState } from 'react';
+import { IoIosArrowRoundBack } from 'react-icons/io';
+import styles from '../../assets/styles/Auth/Auth.module.css';
 
 const AuthRegister = () => {
     const [etapaRegistro, definirEtapaRegistro] = useState(1);
@@ -16,7 +16,7 @@ const AuthRegister = () => {
         cidade: '',
         estado: '',
         cep: '',
-        complemento: ''
+        complemento: '',
     });
     const [erros, definirErros] = useState({});
     const [botaoDesativado, definirBotaoDesativado] = useState(true);
@@ -32,7 +32,7 @@ const AuthRegister = () => {
 
         camposAtuais.forEach((campo) => {
             if (campo !== 'complemento' && !formData[campo]?.trim()) {
-                errosAtuais[campo] = campo === 'numero' ? 'Obrigatório' : 'Este campo é obrigatório';
+                errosAtuais[campo] = 'Este campo é obrigatório';
             } else {
                 errosAtuais[campo] = '';
             }
@@ -76,66 +76,13 @@ const AuthRegister = () => {
 
             return updatedFormData;
         });
-
-        if (id === 'email') {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (value && !emailRegex.test(value)) {
-                definirErros((prevErrors) => ({
-                    ...prevErrors,
-                    email: 'Formato de e-mail inválido'
-                }));
-            } else {
-                definirErros((prevErrors) => ({
-                    ...prevErrors,
-                    email: ''
-                }));
-            }
-        }
-
-        if (id === 'nome') {
-            if (/^\d+$/.test(value)) {
-                definirErros((prevErrors) => ({
-                    ...prevErrors,
-                    nome: 'Formato de nome inválido'
-                }));
-            } else {
-                definirErros((prevErrors) => ({
-                    ...prevErrors,
-                    nome: ''
-                }));
-            }
-        }
-
-        if (id === 'numero') {
-            if (/\D/.test(value)) {
-                definirErros((prevErrors) => ({
-                    ...prevErrors,
-                    numero: 'Inválido'
-                }));
-            } else {
-                definirErros((prevErrors) => ({
-                    ...prevErrors,
-                    numero: ''
-                }));
-            }
-        }
-
-        if (id === 'confirmarSenha' && formData.senha !== value) {
-            definirErros((prevErrors) => ({
-                ...prevErrors,
-                confirmarSenha: 'As senhas não coincidem'
-            }));
-        } else if (id === 'confirmarSenha') {
-            definirErros((prevErrors) => ({
-                ...prevErrors,
-                confirmarSenha: ''
-            }));
-        }
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(values);
+    const handleContinuar = () => {
+        const temErros = validarEtapa();
+        if (!temErros) {
+            definirEtapaRegistro(2);
+        }
     };
 
     const handleVoltar = (e) => {
@@ -144,23 +91,45 @@ const AuthRegister = () => {
         setFormData((prevFormData) => ({
             ...prevFormData,
             senha: '',
-            confirmarSenha: ''
+            confirmarSenha: '',
         }));
         definirEtapaRegistro(1);
         definirBotaoDesativado(true);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const temErros = validarEtapa();
 
         if (!temErros) {
             const dadosParaEnvio = {
                 ...formData,
-                telefone: formData.telefone.replace(/\D/g, ''),
-                cep: formData.cep.replace(/\D/g, ''),
+                telefone: formData.telefone.replace(/\D/g, ''), // Remove caracteres não numéricos do telefone
+                cep: formData.cep.replace(/\D/g, ''), // Remove caracteres não numéricos do CEP
             };
-            console.log(dadosParaEnvio);
+
+            try {
+                const response = await fetch('http://localhost:8080/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dadosParaEnvio),
+                });
+
+                if (response.ok) {
+                    const result = await response.text();
+                    console.log('Registro bem-sucedido:', result);
+                    alert('Usuário registrado com sucesso!');
+                } else {
+                    const error = await response.text();
+                    console.error('Erro no registro:', error);
+                    alert(`Erro ao registrar: ${error}`);
+                }
+            } catch (error) {
+                console.error('Erro ao conectar com o servidor:', error);
+                alert('Não foi possível conectar com o servidor.');
+            }
         }
     };
 
@@ -207,85 +176,33 @@ const AuthRegister = () => {
                             )}
                         </div>
                         <span>Dados de Endereço</span>
-                        <div className={styles.addressContainer}>
-                            <div className={`${styles.inputContainer} ${styles.address}`}>
+                        {camposPorEtapa[2].map((campo) => (
+                            <div key={campo} className={styles.inputContainer}>
                                 <input
                                     type="text"
-                                    id="endereco"
+                                    id={campo}
                                     placeholder=" "
-                                    value={formData.endereco}
+                                    value={formData[campo]}
                                     onChange={handleChange}
                                     autoComplete="off"
                                 />
-                                <label htmlFor="endereco">Endereço *</label>
-                                {erros.endereco && <p className={styles.errorMessage}>{erros.endereco}</p>}
+                                <label htmlFor={campo}>
+                                    {campo === 'endereco' && 'Endereço *'}
+                                    {campo === 'numero' && 'Número *'}
+                                    {campo === 'cidade' && 'Cidade *'}
+                                    {campo === 'estado' && 'Estado *'}
+                                    {campo === 'cep' && 'CEP *'}
+                                    {campo === 'complemento' && 'Complemento'}
+                                </label>
+                                {erros[campo] && <p className={styles.errorMessage}>{erros[campo]}</p>}
                             </div>
-                            <div className={`${styles.inputContainer} ${styles.number}`}>
-                                <input
-                                    type="text"
-                                    id="numero"
-                                    placeholder=" "
-                                    value={formData.numero}
-                                    onChange={handleChange}
-                                    autoComplete="off"
-                                />
-                                <label htmlFor="numero">Número *</label>
-                                {erros.numero && <p className={styles.errorMessage}>{erros.numero}</p>}
-                            </div>
-                        </div>
-                        <div className={styles.inputContainer}>
-                            <input
-                                type="text"
-                                id="cidade"
-                                placeholder=" "
-                                value={formData.cidade}
-                                onChange={handleChange}
-                                autoComplete="off"
-                            />
-                            <label htmlFor="cidade">Cidade *</label>
-                            {erros.cidade && <p className={styles.errorMessage}>{erros.cidade}</p>}
-                        </div>
-                        <div className={styles.inputContainer}>
-                            <input
-                                type="text"
-                                id="estado"
-                                placeholder=" "
-                                value={formData.estado}
-                                onChange={handleChange}
-                                autoComplete="off"
-                            />
-                            <label htmlFor="estado">Estado *</label>
-                            {erros.estado && <p className={styles.errorMessage}>{erros.estado}</p>}
-                        </div>
-                        <div className={styles.inputContainer}>
-                            <input
-                                type="text"
-                                id="cep"
-                                placeholder=" "
-                                value={formData.cep}
-                                onChange={handleChange}
-                                autoComplete="off"
-                            />
-                            <label htmlFor="cep">CEP *</label>
-                            {erros.cep && <p className={styles.errorMessage}>{erros.cep}</p>}
-                        </div>
-                        <div className={styles.inputContainer}>
-                            <input
-                                type="text"
-                                id="complemento"
-                                placeholder=" "
-                                value={formData.complemento}
-                                onChange={handleChange}
-                                autoComplete="off"
-                            />
-                            <label htmlFor="complemento">Complemento</label>
-                        </div>
+                        ))}
                     </>
                 )}
                 <button
                     type={etapaRegistro === 1 ? 'button' : 'submit'}
                     className={`${styles.auth} ${botaoDesativado ? styles.buttonDisabled : ''}`}
-                    onClick={etapaRegistro === 1 ? handleContinuar : handleSubmit}
+                    onClick={etapaRegistro === 1 ? handleContinuar : undefined}
                     disabled={botaoDesativado}
                 >
                     {etapaRegistro === 1 ? 'Continuar' : 'Cadastrar'}
@@ -293,6 +210,6 @@ const AuthRegister = () => {
             </form>
         </div>
     );
-}
+};
 
-export default AuthRegister
+export default AuthRegister;

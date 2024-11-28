@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
-import styles from '../../assets/styles/Auth/Auth.module.css'
+import React, { useState } from 'react';
+import styles from '../../assets/styles/Auth/Auth.module.css';
 
 const AuthLogin = () => {
     const [values, setValues] = useState({ emailOuTelefone: '', senha: '' });
     const [errors, setErrors] = useState({});
     const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -25,12 +26,36 @@ const AuthLogin = () => {
         setIsButtonDisabled(hasErrors || hasEmptyFields);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+    
         if (!isButtonDisabled) {
-            console.log(values);
+            const isEmail = values.emailOuTelefone.includes("@");
+    
+            const response = await fetch('http://localhost:8080/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    [isEmail ? 'email' : 'telefone']: values.emailOuTelefone, 
+                    senha: values.senha,
+                }),
+            });
+            
+    
+            const data = await response.json();
+            console.log(data);
+            // Caso precise de algum comportamento baseado na resposta
+            if (response.ok) {
+                // Logado com sucesso
+            } else {
+                // Mostrar erro
+            }
         }
     };
+    
 
     return (
         <div className={`${styles.formularioContainer} ${styles.entrar}`}>
@@ -70,13 +95,13 @@ const AuthLogin = () => {
                 <button
                     type="submit"
                     className={`${styles.auth} ${isButtonDisabled ? styles.buttonDisabled : ''}`}
-                    disabled={isButtonDisabled}
+                    disabled={isButtonDisabled || loading}
                 >
-                    Entrar
+                    {loading ? 'Entrando...' : 'Entrar'}
                 </button>
             </form>
         </div>
     );
 }
 
-export default AuthLogin
+export default AuthLogin;
