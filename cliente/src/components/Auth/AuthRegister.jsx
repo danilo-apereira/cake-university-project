@@ -133,16 +133,9 @@ const AuthRegister = () => {
         }
     };
 
-    const handleContinuar = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        const temErros = validarEtapa();
-
-        if (!temErros) {
-            definirEtapaRegistro(2);
-            const camposAtuais = camposPorEtapa[2].filter((campo) => campo !== 'complemento');
-            const formularioValido = camposAtuais.every((campo) => formData[campo]?.trim());
-            definirBotaoDesativado(!formularioValido);
-        }
+        console.log(values);
     };
 
     const handleVoltar = (e) => {
