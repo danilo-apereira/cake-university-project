@@ -35,10 +35,62 @@ const AuthRegister = () => {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(values);
+    
+        // Verifica se todos os campos obrigatórios estão preenchidos
+        if (!values.nome || !values.email || !values.senha) {
+            alert("Por favor, preencha todos os campos obrigatórios.");
+            return;
+        }
+    
+        try {
+            const response = await fetch("http://localhost:8080/auth/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    nome: values.nome,
+                    email: values.email,
+                    senha: values.senha,
+                    telefone: values.telefone,
+                    endereco: values.endereco,
+                    numero: values.numero,
+                    cidade: values.cidade,
+                    estado: values.estado,
+                    cep: values.cep,
+                    complemento: values.complemento,
+                }),
+            });
+    
+            if (!response.ok) {
+                const error = await response.text();
+                alert(`Erro ao cadastrar: ${error}`);
+                return;
+            }
+    
+            const result = await response.text();
+            console.log(result); // toaster depois pls
+            setValues({
+                nome: "",
+                email: "",
+                telefone: "",
+                senha: "",
+                confirmeSenha: "",
+                endereco: "",
+                numero: "",
+                cidade: "",
+                estado: "",
+                cep: "",
+                complemento: "",
+            });
+        } catch (error) {
+            console.error("Erro ao registrar usuário:", error);
+            alert("Erro ao conectar com o servidor.");
+        }
     };
+    
 
     const handleContinue = (e) => {
         e.preventDefault();
