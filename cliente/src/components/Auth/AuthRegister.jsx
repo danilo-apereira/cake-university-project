@@ -1,225 +1,236 @@
-import React, { useState } from 'react';
-import { IoIosArrowRoundBack } from 'react-icons/io';
-import styles from '../../assets/styles/Auth/Auth.module.css';
+import React, { useState } from 'react'
+import { IoIosArrowRoundBack } from 'react-icons/io'
+import styles from '../../assets/styles/Auth/Auth.module.css'
 
 const AuthRegister = () => {
-    const [registerStep, setRegisterStep] = useState(1);
-    const [tooltipVisible, setTooltipVisible] = useState(false);
-    const [values, setValues] = useState({
+    const [etapaRegistro, definirEtapaRegistro] = useState(1);
+    const [tooltipVisivel, definirTooltipVisivel] = useState(false);
+    const [formData, setFormData] = useState({
         nome: '',
         email: '',
         telefone: '',
         senha: '',
-        confirmeSenha: '',
+        confirmarSenha: '',
         endereco: '',
         numero: '',
         cidade: '',
         estado: '',
         cep: '',
-        complemento: '',
+        complemento: ''
     });
+    const [erros, definirErros] = useState({});
+    const [botaoDesativado, definirBotaoDesativado] = useState(true);
 
-    const [errors, setErrors] = useState({});
+    const camposPorEtapa = {
+        1: ['nome', 'email', 'telefone', 'senha', 'confirmarSenha'],
+        2: ['endereco', 'numero', 'cidade', 'estado', 'cep', 'complemento'],
+    };
+
+    const validarEtapa = () => {
+        const camposAtuais = camposPorEtapa[etapaRegistro];
+        const errosAtuais = {};
+
+        camposAtuais.forEach((campo) => {
+            if (campo !== 'complemento' && !formData[campo]?.trim()) {
+                errosAtuais[campo] = campo === 'numero' ? 'Obrigatório' : 'Este campo é obrigatório';
+            } else {
+                errosAtuais[campo] = '';
+            }
+        });
+
+        definirErros((prevErrors) => ({ ...prevErrors, ...errosAtuais }));
+        return Object.values(errosAtuais).some((erro) => erro !== '');
+    };
 
     const handleChange = (e) => {
         const { id, value } = e.target;
-        setValues((prevValues) => ({ ...prevValues, [id]: value }));
 
-        if (!value) {
-            setErrors((prevErrors) => ({
-                ...prevErrors,
-                [id]: id === 'numero' ? 'Obrigatório' : 'Este campo é obrigatório',
-            }));
-        } else {
-            setErrors((prevErrors) => ({ ...prevErrors, [id]: '' }));
-        }
-    };
+        let formattedValue = value;
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-    
-        // Verifica se todos os campos obrigatórios estão preenchidos
-        if (!values.nome || !values.email || !values.senha) {
-            alert("Por favor, preencha todos os campos obrigatórios.");
-            return;
+        if (id === 'telefone') {
+            formattedValue = value
+                .replace(/\D/g, '')
+                .slice(0, 11)
+                .replace(/^(\d{2})(\d)/, '($1) $2')
+                .replace(/(\d{4,5})(\d{4})$/, '$1-$2');
         }
-    
-        try {
-            const response = await fetch("http://localhost:8080/auth/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    nome: values.nome,
-                    email: values.email,
-                    senha: values.senha,
-                    telefone: values.telefone,
-                    endereco: values.endereco,
-                    numero: values.numero,
-                    cidade: values.cidade,
-                    estado: values.estado,
-                    cep: values.cep,
-                    complemento: values.complemento,
-                }),
+
+        if (id === 'cep') {
+            formattedValue = value
+                .replace(/\D/g, '')
+                .slice(0, 8)
+                .replace(/^(\d{5})(\d{1,3})$/, '$1-$2');
+        }
+
+        setFormData((prevFormData) => {
+            const updatedFormData = { ...prevFormData, [id]: formattedValue };
+
+            const camposAtuais = camposPorEtapa[etapaRegistro].filter((campo) => campo !== 'complemento');
+            const formularioValido = camposAtuais.every((campo) => {
+                if (campo === 'telefone') return updatedFormData[campo]?.replace(/\D/g, '').length === 11;
+                if (campo === 'cep') return updatedFormData[campo]?.replace(/\D/g, '').length === 8;
+                return updatedFormData[campo]?.trim();
             });
-    
-            if (!response.ok) {
-                const error = await response.text();
-                alert(`Erro ao cadastrar: ${error}`);
-                return;
+
+            definirBotaoDesativado(!formularioValido);
+
+            return updatedFormData;
+        });
+
+        if (id === 'email') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (value && !emailRegex.test(value)) {
+                definirErros((prevErrors) => ({
+                    ...prevErrors,
+                    email: 'Formato de e-mail inválido'
+                }));
+            } else {
+                definirErros((prevErrors) => ({
+                    ...prevErrors,
+                    email: ''
+                }));
             }
-    
-            const result = await response.text();
-            console.log(result); // toaster depois pls
-            setValues({
-                nome: "",
-                email: "",
-                telefone: "",
-                senha: "",
-                confirmeSenha: "",
-                endereco: "",
-                numero: "",
-                cidade: "",
-                estado: "",
-                cep: "",
-                complemento: "",
-            });
-        } catch (error) {
-            console.error("Erro ao registrar usuário:", error);
-            alert("Erro ao conectar com o servidor.");
+        }
+
+        if (id === 'nome') {
+            if (/^\d+$/.test(value)) {
+                definirErros((prevErrors) => ({
+                    ...prevErrors,
+                    nome: 'Formato de nome inválido'
+                }));
+            } else {
+                definirErros((prevErrors) => ({
+                    ...prevErrors,
+                    nome: ''
+                }));
+            }
+        }
+
+        if (id === 'numero') {
+            if (/\D/.test(value)) {
+                definirErros((prevErrors) => ({
+                    ...prevErrors,
+                    numero: 'Inválido'
+                }));
+            } else {
+                definirErros((prevErrors) => ({
+                    ...prevErrors,
+                    numero: ''
+                }));
+            }
+        }
+
+        if (id === 'confirmarSenha' && formData.senha !== value) {
+            definirErros((prevErrors) => ({
+                ...prevErrors,
+                confirmarSenha: 'As senhas não coincidem'
+            }));
+        } else if (id === 'confirmarSenha') {
+            definirErros((prevErrors) => ({
+                ...prevErrors,
+                confirmarSenha: ''
+            }));
         }
     };
-    
 
-    const handleContinue = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        setRegisterStep(2);
+        console.log(values);
     };
 
-    const handleBack = (e) => {
+    const handleVoltar = (e) => {
         e.preventDefault();
-        setTooltipVisible(false);
-        setRegisterStep(1);
+        definirTooltipVisivel(false);
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            senha: '',
+            confirmarSenha: ''
+        }));
+        definirEtapaRegistro(1);
+        definirBotaoDesativado(true);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const temErros = validarEtapa();
+
+        if (!temErros) {
+            const dadosParaEnvio = {
+                ...formData,
+                telefone: formData.telefone.replace(/\D/g, ''),
+                cep: formData.cep.replace(/\D/g, ''),
+            };
+            console.log(dadosParaEnvio);
+        }
     };
 
     return (
         <div className={`${styles.formularioContainer} ${styles.registrar}`}>
             <form onSubmit={handleSubmit}>
                 <h1>Registrar</h1>
-                {registerStep === 1 ? (
+                {etapaRegistro === 1 ? (
                     <>
                         <span>Dados iniciais</span>
-                        <div className={styles.inputContainer}>
-                            <input
-                                type="text"
-                                id="nome"
-                                placeholder=" "
-                                value={values.nome}
-                                onChange={handleChange}
-                            />
-                            <label htmlFor="nome">Nome completo</label>
-                            {errors.nome && (
-                                <p className={styles.errorMessage}>{errors.nome}</p>
-                            )}
-                        </div>
-                        <div className={styles.inputContainer}>
-                            <input
-                                type="email"
-                                id="email"
-                                placeholder=" "
-                                value={values.email}
-                                onChange={handleChange}
-                            />
-                            <label htmlFor="email">E-mail</label>
-                            {errors.email && (
-                                <p className={styles.errorMessage}>{errors.email}</p>
-                            )}
-                        </div>
-                        <div className={styles.inputContainer}>
-                            <input
-                                type="text"
-                                id="telefone"
-                                placeholder=" "
-                                value={values.telefone}
-                                onChange={handleChange}
-                            />
-                            <label htmlFor="telefone">Telefone</label>
-                            {errors.telefone && (
-                                <p className={styles.errorMessage}>{errors.telefone}</p>
-                            )}
-                        </div>
-                        <div className={styles.inputContainer}>
-                            <input
-                                type="password"
-                                id="senha"
-                                placeholder=" "
-                                value={values.senha}
-                                onChange={handleChange}
-                            />
-                            <label htmlFor="senha">Senha</label>
-                            {errors.senha && (
-                                <p className={styles.errorMessage}>{errors.senha}</p>
-                            )}
-                        </div>
-                        <div className={styles.inputContainer}>
-                            <input
-                                type="password"
-                                id="confirmeSenha"
-                                placeholder=" "
-                                value={values.confirmeSenha}
-                                onChange={handleChange}
-                            />
-                            <label htmlFor="confirmeSenha">Confirmar senha</label>
-                            {errors.confirmeSenha && (
-                                <p className={styles.errorMessage}>{errors.confirmeSenha}</p>
-                            )}
-                        </div>
-                        <button className={styles.auth} onClick={handleContinue}>
-                            Continuar
-                        </button>
+                        {camposPorEtapa[1].map((campo) => (
+                            <div key={campo} className={styles.inputContainer}>
+                                <input
+                                    type={campo === 'senha' || campo === 'confirmarSenha' ? 'password' : 'text'}
+                                    id={campo}
+                                    placeholder=" "
+                                    value={formData[campo]}
+                                    onChange={handleChange}
+                                    autoComplete="off"
+                                />
+                                <label htmlFor={campo}>
+                                    {campo === 'nome' && 'Nome completo *'}
+                                    {campo === 'email' && 'E-mail *'}
+                                    {campo === 'telefone' && 'Telefone *'}
+                                    {campo === 'senha' && 'Senha *'}
+                                    {campo === 'confirmarSenha' && 'Confirmar senha *'}
+                                </label>
+                                {erros[campo] && <p className={styles.errorMessage}>{erros[campo]}</p>}
+                            </div>
+                        ))}
                     </>
                 ) : (
                     <>
                         <div
                             className={styles.iconContainer}
-                            onMouseEnter={() => setTooltipVisible(true)}
-                            onMouseLeave={() => setTooltipVisible(false)}
+                            onMouseEnter={() => definirTooltipVisivel(true)}
+                            onMouseLeave={() => definirTooltipVisivel(false)}
                         >
-                            <IoIosArrowRoundBack className={styles.icon} onClick={handleBack} />
-                            {tooltipVisible && (
+                            <IoIosArrowRoundBack className={styles.icon} onClick={handleVoltar} />
+                            {tooltipVisivel && (
                                 <div className={styles.infoBox}>
                                     Volte para ajustar as informações anteriores.
                                 </div>
                             )}
                         </div>
-                        <span>Dados de endereço</span>
+                        <span>Dados de Endereço</span>
                         <div className={styles.addressContainer}>
                             <div className={`${styles.inputContainer} ${styles.address}`}>
                                 <input
                                     type="text"
                                     id="endereco"
                                     placeholder=" "
-                                    value={values.endereco}
+                                    value={formData.endereco}
                                     onChange={handleChange}
+                                    autoComplete="off"
                                 />
-                                <label htmlFor="endereco">Endereço</label>
-                                {errors.endereco && (
-                                    <p className={styles.errorMessage}>{errors.endereco}</p>
-                                )}
+                                <label htmlFor="endereco">Endereço *</label>
+                                {erros.endereco && <p className={styles.errorMessage}>{erros.endereco}</p>}
                             </div>
                             <div className={`${styles.inputContainer} ${styles.number}`}>
                                 <input
                                     type="text"
                                     id="numero"
                                     placeholder=" "
-                                    value={values.numero}
+                                    value={formData.numero}
                                     onChange={handleChange}
+                                    autoComplete="off"
                                 />
-                                <label htmlFor="numero">Número</label>
-                                {errors.numero && (
-                                    <p className={styles.errorMessage}>{errors.numero}</p>
-                                )}
+                                <label htmlFor="numero">Número *</label>
+                                {erros.numero && <p className={styles.errorMessage}>{erros.numero}</p>}
                             </div>
                         </div>
                         <div className={styles.inputContainer}>
@@ -227,58 +238,58 @@ const AuthRegister = () => {
                                 type="text"
                                 id="cidade"
                                 placeholder=" "
-                                value={values.cidade}
+                                value={formData.cidade}
                                 onChange={handleChange}
+                                autoComplete="off"
                             />
-                            <label htmlFor="cidade">Cidade</label>
-                            {errors.cidade && (
-                                <p className={styles.errorMessage}>{errors.cidade}</p>
-                            )}
+                            <label htmlFor="cidade">Cidade *</label>
+                            {erros.cidade && <p className={styles.errorMessage}>{erros.cidade}</p>}
                         </div>
                         <div className={styles.inputContainer}>
                             <input
                                 type="text"
                                 id="estado"
                                 placeholder=" "
-                                value={values.estado}
+                                value={formData.estado}
                                 onChange={handleChange}
+                                autoComplete="off"
                             />
-                            <label htmlFor="estado">Estado</label>
-                            {errors.estado && (
-                                <p className={styles.errorMessage}>{errors.estado}</p>
-                            )}
+                            <label htmlFor="estado">Estado *</label>
+                            {erros.estado && <p className={styles.errorMessage}>{erros.estado}</p>}
                         </div>
                         <div className={styles.inputContainer}>
                             <input
                                 type="text"
                                 id="cep"
                                 placeholder=" "
-                                value={values.cep}
+                                value={formData.cep}
                                 onChange={handleChange}
+                                autoComplete="off"
                             />
-                            <label htmlFor="cep">CEP</label>
-                            {errors.cep && (
-                                <p className={styles.errorMessage}>{errors.cep}</p>
-                            )}
+                            <label htmlFor="cep">CEP *</label>
+                            {erros.cep && <p className={styles.errorMessage}>{erros.cep}</p>}
                         </div>
                         <div className={styles.inputContainer}>
                             <input
                                 type="text"
                                 id="complemento"
                                 placeholder=" "
-                                value={values.complemento}
+                                value={formData.complemento}
                                 onChange={handleChange}
+                                autoComplete="off"
                             />
                             <label htmlFor="complemento">Complemento</label>
-                            {errors.complemento && (
-                                <p className={styles.errorMessage}>{errors.complemento}</p>
-                            )}
                         </div>
-                        <button type="submit" className={styles.auth}>
-                            Cadastrar
-                        </button>
                     </>
                 )}
+                <button
+                    type={etapaRegistro === 1 ? 'button' : 'submit'}
+                    className={`${styles.auth} ${botaoDesativado ? styles.buttonDisabled : ''}`}
+                    onClick={etapaRegistro === 1 ? handleContinuar : handleSubmit}
+                    disabled={botaoDesativado}
+                >
+                    {etapaRegistro === 1 ? 'Continuar' : 'Cadastrar'}
+                </button>
             </form>
         </div>
     );

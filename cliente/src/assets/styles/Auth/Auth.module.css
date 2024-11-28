@@ -70,6 +70,14 @@
     border: 1px solid var(--color-scd-variant);
 }
 
+.container button.auth.buttonDisabled {
+    border: 1px solid var(--color-scd);
+    background: var(--color-white);
+    color: var(--color-scd);
+    cursor: not-allowed;
+    font-weight: 100;
+}
+
 .container .trocar button {
     width: 200px;
 }
